@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Food Generator</title>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100">
+  <h1 class="text-4xl font-bold text-gray-800 mb-6">Food Generator</h1>
+  <button class="bg-green-500 text-white font-bold py-2 px-4 text-lg rounded hover:bg-green-600 transition" onclick="generateFood()">Generate Random Food</button>
+  <div id="foodResult" class="mt-6 text-center"></div>
+
+  <script>
+    // Your Spoonacular API key
+    const apiKey = '486efbffca6245b293d0336fa0c7ea29';
+
+    // Function to generate random food
+    function generateFood() {
+      // Spoonacular API endpoint for random food
+      const apiUrl = `https://api.spoonacular.com/recipes/random?apiKey=${apiKey}`;
+
+      // Make a GET request to the Spoonacular API
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          // Extract relevant information from the API response
+          const recipe = data.recipes[0];
+          const title = recipe.title;
+          const imageUrl = recipe.image;
+          const recipeUrl = recipe.sourceUrl;
+
+          // Display the result on the webpage
+          const resultDiv = document.getElementById('foodResult');
+          resultDiv.innerHTML = `
+            <h2 class="text-2xl font-semibold text-gray-700">${title}</h2>
+            <img src="${imageUrl}" alt="${title}" class="max-w-xs max-h-xs mt-4 rounded shadow">
+            <button class="bg-blue-500 text-white font-bold py-2 px-4 mt-4 rounded hover:bg-blue-600 transition" onclick="openRecipeTab('${recipeUrl}')">Open Recipe</button>
+          `;
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+          const resultDiv = document.getElementById('foodResult');
+          resultDiv.innerHTML = '<p class="text-red-500">Failed to fetch food data. Please try again later.</p>';
+        });
+    }
+
+    // Function to open the recipe in a new tab
+    function openRecipeTab(recipeUrl) {
+      window.open(recipeUrl, '_blank');
+    }
+  </script>
+</body>
+</html>
